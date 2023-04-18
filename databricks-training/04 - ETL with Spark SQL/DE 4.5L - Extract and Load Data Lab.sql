@@ -68,8 +68,12 @@
 
 -- COMMAND ----------
 
--- TODO
-<FILL_IN> ${da.paths.datasets}/ecommerce/raw/events-kafka/
+CREATE OR REPLACE TABLE events_json
+AS SELECT binary(key), bigint(`offset`) `offset`, int(`partition`) `partition`, bigint(`timestamp`) timestamp, topic, binary(value) FROM json.`${da.paths.datasets}/ecommerce/raw/events-kafka/`
+
+-- COMMAND ----------
+
+describe detail  events_json
 
 -- COMMAND ----------
 
@@ -99,8 +103,15 @@
 
 -- COMMAND ----------
 
--- TODO
-<FILL_IN>
+CREATE TABLE events_raw (
+  key binary, 
+  `offset` bigint,
+  `partition` int,
+  `timestamp` bigint,
+  topic string,
+  value binary)
+USING json
+LOCATION "${DA.paths.user_db}"
 
 -- COMMAND ----------
 
@@ -128,8 +139,9 @@
 
 -- COMMAND ----------
 
--- TODO
-<FILL_IN>
+insert into events_raw
+select * from events_json
+
 
 -- COMMAND ----------
 
@@ -140,8 +152,7 @@
 
 -- COMMAND ----------
 
--- TODO
-<FILL_IN>
+select * from events_raw
 
 -- COMMAND ----------
 
@@ -175,8 +186,9 @@
 
 -- COMMAND ----------
 
--- TODO
-<FILL_IN> ${da.paths.datasets}/ecommerce/raw/item-lookup
+CREATE TABLE item_lookup
+USING PARQUET
+LOCATION "${da.paths.datasets}/ecommerce/raw/item-lookup"
 
 -- COMMAND ----------
 
